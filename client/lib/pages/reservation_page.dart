@@ -122,30 +122,38 @@ class _ReservationPageState extends State<ReservationPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            const SizedBox(height: 20),
-            _buildLabel('Branch'),
-            _buildBranchDropdown(),
-            _buildLabel('Use Date'),
-            _buildDatePicker(),
-            _buildLabel('Check-in'),
-            _buildTimeDropdown(isCheckIn: true),
-            _buildLabel('Check-out'),
-            _buildTimeDropdown(isCheckIn: false),
-            Expanded(child: _buildSeatGrid()),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _grayButton('Check Out', _checkout),
-                const SizedBox(width: 20),
-                _grayButton('Go back', () => Navigator.pop(context)),
-              ],
-            ),
-            const SizedBox(height: 30),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 20),
+              _buildLabel('Branch'),
+              _buildBranchDropdown(),
+              _buildLabel('Use Date'),
+              _buildDatePicker(),
+              _buildLabel('Check-in'),
+              _buildTimeDropdown(isCheckIn: true),
+              _buildLabel('Check-out'),
+              _buildTimeDropdown(isCheckIn: false),
+
+              _buildLabel('Select Seat'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: _buildSeatGrid(), // 이제 이거는 Expanded가 아님
+              ),
+
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _grayButton('Check Out', _checkout),
+                  const SizedBox(width: 20),
+                  _grayButton('Go back', () => Navigator.pop(context)),
+                ],
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );
@@ -280,8 +288,9 @@ class _ReservationPageState extends State<ReservationPage> {
 
   Widget _buildSeatGrid() {
     return GridView.count(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       crossAxisCount: 8,
       crossAxisSpacing: 8,
       mainAxisSpacing: 8,
@@ -300,8 +309,6 @@ class _ReservationPageState extends State<ReservationPage> {
                         });
                       },
               child: Container(
-                width: 5,
-                height: 5,
                 decoration: BoxDecoration(
                   color:
                       isDisabled
@@ -368,7 +375,6 @@ class _ReservationPageState extends State<ReservationPage> {
           'usingDate': selectedDate,
           'checkin': checkInDateTime,
           'checkout': checkOutDateTime,
-          // 필요하면 userId도 같이 보내야 함 (로그인 정보 기반으로!)
         },
       );
 
