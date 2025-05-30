@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.reservation.demo.repository.UserDAO">
+
+    <select id="selectLoginUser" parameterType="com.reservation.demo.dto.UserLginReq" resultType="com.reservation.demo.domain.UserLginInfo">
+        SELECT USER_ID, USER_PW, USER_NAME, USER_EMAIL, PW_ERR_CNT, REG_DT
+        FROM USER_MASTER
+        WHERE 1=1
+        AND USER_ID = #{userId}
+        AND USER_PW = #{userPw}
+    </select>
+
+    <update id="updateErrorCount" parameterType="com.reservation.demo.dto.UserLginReq">
+        UPDATE USER_MASTER
+        SET PW_ERR_CNT = PW_ERR_CNT + 1
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updateErrorCountZero" parameterType="com.reservation.demo.dto.UserLginReq">
+        UPDATE USER_MASTER
+        SET PW_ERR_CNT = 0
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <insert id="insertLoginUserHist" parameterType="com.reservation.demo.domain.UserLginHistVO">
+        INSERT INTO USER_LOGIN_HISTORY(USER_ID, IP_ADDR, REG_DT)
+        VALUES (#{userId}, #{ipAddr}, now())
+    </insert>
+
+    <insert id="insertUser" parameterType="com.reservation.demo.dto.UserRegsReq">
+        INSERT INTO USER_MASTER(USER_ID, USER_PW, USER_NAME, USER_EMAIL, TICKET, PW_ERR_CNT, REG_DT)
+        VALUES (#{userId}, #{userPw}, #{userName}, #{userEmail}, 0, 0, now())
+    </insert>
+
+    <select id="ChkUserId" parameterType="String" resultType="Integer">
+        /* 아이디 중복 체크 */
+        SELECT
+        COUNT(*) AS CNT
+        FROM USER_MASTER
+        WHERE 1=1
+        AND USER_ID = #{userId}
+    </select>
+
+    <delete id="deleteUser" parameterType="String">
+        DELETE FROM USER_MASTER
+        WHERE USER_ID = #{userId}
+    </delete>
+
+    <select id="selectUser" parameterType="String" resultType="com.reservation.demo.domain.UserLginInfo">
+        SELECT USER_ID, USER_NAME, USER_PW, USER_EMAIL, TICKET, PW_ERR_CNT, REG_DT
+        FROM USER_MASTER
+        WHERE 1=1
+        AND USER_ID = #{userId}
+    </select>
+
+    <select id="selectBookingByUserId" parameterType="String" resultType="com.reservation.demo.domain.BookingInfo">
+        SELECT BOOKING_ID, USER_ID, BRANCH, SEAT_NUMBER, USING_DATE, CHECK_IN, CHECK_OUT, REQUEST
+        FROM BOOKING_INFO
+        WHERE 1=1
+        AND USER_ID = #{userId}
+    </select>
+
+    <select id="selectUpcomingBookingByUserId" parameterType="String" resultType="com.reservation.demo.domain.BookingInfo">
+        SELECT BOOKING_ID, USER_ID, BRANCH, SEAT_NUMBER, USING_DATE, CHECK_IN, CHECK_OUT, REQUEST
+        FROM BOOKING_INFO
+        WHERE 1=1
+        AND USER_ID = #{userId}
+        AND USING_DATE <![CDATA[ >= ]]> DATE_FORMAT(NOW(), '%Y-%m-%d')
+    </select>
+
+    <select id="selectPastBookingByUserId" parameterType="String" resultType="com.reservation.demo.domain.BookingInfo">
+        SELECT BOOKING_ID, USER_ID, BRANCH, SEAT_NUMBER, USING_DATE, CHECK_IN, CHECK_OUT, REQUEST
+        FROM BOOKING_INFO
+        WHERE 1=1
+        AND USER_ID = #{userId}
+        AND USING_DATE <![CDATA[ < ]]> DATE_FORMAT(NOW(), '%Y-%m-%d')
+    </select>
+
+    <select id="selectInquiryByUserId" parameterType="String" resultType="com.reservation.demo.domain.InquiryInfo">
+        SELECT INQUIRY_ID, USER_ID, INQUIRY_TITLE, INQUIRY_TYPE, INQUIRY_CONTENT
+        FROM INQUIRY_INFO
+        WHERE 1=1
+        AND USER_ID = #{userId}
+    </select>
+
+</mapper>

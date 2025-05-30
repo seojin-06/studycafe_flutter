@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.reservation.demo.repository.TicketDAO">
+
+    <insert id="insertTicket" parameterType="com.reservation.demo.dto.TicketBuyReq">
+        INSERT INTO TICKET_MASTER (
+        TICKET_ID, USER_ID,
+        PURCHASE_DATE, EXPIRE_DATE,
+        PAYMENT_METHOD, TICKET_TYPE, IS_EXPIRED )
+        VALUES (
+        #{ticketId}, #{userId},
+        NOW(), #{expireDate},
+        #{paymentMethod}, #{ticketType}, 0)
+    </insert>
+
+    <select id="checkEnable" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM TICKET_MASTER
+        WHERE USER_ID = #{userId}
+        AND EXPIRE_DATE > NOW()
+    </select>
+
+    <select id="ticketIdExists" parameterType="String" resultType="int">
+        SELECT COUNT(*) AS CNT
+        FROM TICKET_MASTER
+        WHERE TICKET_ID = #{ticketId}
+    </select>
+
+    <update id="updateTicketPurchase" parameterType="String">
+        UPDATE USER_MASTER
+        SET TICKET = 1
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updateTicketExpire" parameterType="String">
+        UPDATE USER_MASTER
+        SET TICKET = 0
+        WHERE USER_ID = #{userId}
+    </update>
+
+    <select id="selectTicketInfoByUserId" parameterType="String" resultType="com.reservation.demo.domain.TicketInfo">
+        SELECT *
+        FROM TICKET_MASTER
+        WHERE USER_ID = #{userId}
+        ORDER BY PURCHASE_DATE DESC
+        LIMIT 1
+    </select>
+</mapper>
