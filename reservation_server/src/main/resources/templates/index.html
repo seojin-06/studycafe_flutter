@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>STUDY CAFE</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            height: 100%;
+        }
+
+        .hero {
+            background: url('/images/main.jpg') no-repeat center bottom;
+            background-size: cover;
+            height: 100vh;
+            position: relative;
+            color: white;
+        }
+
+        header {
+            background-color: #fff;
+            color: #fff;
+            padding: 20px 0;
+            display: flex;
+            height: 150px;
+            justify-content: space-between;
+            align-items: center;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            color: #000;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            position: absolute;          /* 💡 상단 오른쪽 고정! */
+            top: 20px;                   /* 상단 여백 */
+            right: 10px;                 /* 오른쪽 여백 */
+        }
+
+        .nav-buttons a {
+            width: 120px;                /* ✅ 너비 고정 */
+            height: 40px;                /* ✅ 높이 고정 */
+            padding: 10px 20px;
+            background-color: #000;
+            color: #fff;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-buttons a.light {
+            background-color: #eee;
+            color: #000;
+        }
+
+        .center-buttons {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+        }
+
+        .center-buttons a {
+            padding: 20px 40px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .purchase {
+            background: white;
+            color: black;
+        }
+
+        .reserve {
+            background: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <header>
+        <h1>STUDY<br/>CAFE</h1>
+
+        <div class="nav-buttons">
+            <div th:if="${USER_VO == null or USER_VO.lginYn != 'Y'}">
+                <a href="/user/login" class="light">LOG IN</a>
+                <a href="/user/signup">SIGN UP</a>
+            </div>
+            <div th:if="${USER_VO != null and USER_VO.lginYn == 'Y'}">
+                <a href="/user/logout" class="light">LOG OUT</a>
+                <a href="/user/mypage">MY PAGE</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="center-buttons" th:if="${USER_VO != null and USER_VO.lginYn == 'Y'}">
+        <a href="/ticket" class="purchase">이용권 구매</a>
+        <a href="/booking" class="reserve">좌석 예약</a>
+    </div>
+</div>
+
+</body>
+</html>

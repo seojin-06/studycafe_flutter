@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.reservation.demo.repository.BookingDAO">
+    <insert id="insertBooking" parameterType="com.reservation.demo.dto.BookingReq">
+        INSERT INTO BOOKING_INFO (
+        BOOKING_ID, USER_ID, BRANCH, SEAT_NUMBER, USING_DATE, CHECK_IN, CHECK_OUT, REQUEST, REG_DT)
+        VALUES (
+        #{bookingId}, #{userId}, #{branch}, #{seatNumber}, #{usingDate}, #{checkin}, #{checkout}, #{request}, NOW())
+    </insert>
+
+    <select id="bookingIdExists" parameterType="String" resultType="int">
+        SELECT COUNT(*) AS CNT
+        FROM BOOKING_INFO
+        WHERE BOOKING_ID = #{bookingId}
+    </select>
+
+    <select id="selectBookingById" parameterType="String" resultType="com.reservation.demo.domain.BookingInfo">
+        SELECT *
+        FROM BOOKING_INFO
+        WHERE BOOKING_ID = #{bookingId}
+    </select>
+
+    <update id="updateBooking" parameterType="com.reservation.demo.dto.BookingUpdateReq">
+        UPDATE BOOKING_INFO
+        SET BRANCH = IFNULL(#{branch}, BRANCH),
+        SEAT_NUMBER = IFNULL(#{seatNumber}, SEAT_NUMBER),
+        USING_DATE = IFNULL(#{usingDate}, USING_DATE),
+        CHECK_IN = IFNULL(#{checkin}, CHECK_IN),
+        CHECK_OUT = IFNULL(#{checkout}, CHECK_OUT),
+        REQUEST = IFNULL(#{request}, REQUEST)
+        WHERE BOOKING_ID = #{bookingId}
+    </update>
+
+    <delete id="cancelBooking" parameterType="String">
+        DELETE FROM BOOKING_INFO
+        WHERE BOOKING_ID = #{bookingId}
+    </delete>
+
+    <select id="selectReservedSeats" resultType="com.reservation.demo.domain.BookingInfo">
+        SELECT *
+        FROM BOOKING_INFO
+        WHERE using_date = #{date}
+        AND (
+        (check_in <![CDATA[ < ]]> #{checkOut}
+        AND check_out <![CDATA[ > ]]> #{checkIn})
+        )
+    </select>
+</mapper>
